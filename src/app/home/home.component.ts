@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HousingLocationComponent } from '../housing-location/housing-location.component';
 import { HousingLocation } from '../housinglocation';
@@ -14,8 +14,8 @@ import { HousingService } from '../housing.service';
   template: `
   <section>
     <form>
-      <input type="text" placeholder="Filter by city" #filter>
-      <button class="primary" type="button" (click)="filterResults(filter.value)">Search</button>
+      <input type="text" placeholder="Filter by city" #filter (keydown.enter)="$event.preventDefault()" (keyup.enter)="clickButton()">
+      <button #buttonRef class="primary" type="button" (click)="filterResults(filter.value)">Search</button>
     </form>
   </section>
   <section class="results">
@@ -38,7 +38,12 @@ export class HomeComponent {
       this.filteredLocationList = housingLocationList;
     });
   }
-  
+
+  @ViewChild('buttonRef') buttonRef!: ElementRef;
+  clickButton() {
+    this.buttonRef.nativeElement.click();
+  }  
+
   filterResults(text: string) {
     if (!text) {
       this.filteredLocationList = this.housingLocationList;
